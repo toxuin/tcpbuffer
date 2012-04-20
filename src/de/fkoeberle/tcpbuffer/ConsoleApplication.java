@@ -13,7 +13,7 @@ package de.fkoeberle.tcpbuffer;
 
 public class ConsoleApplication {
 	public static void main(String[] args) {
-		String targetAddress = getProperty("target.address", "localhost");
+		String targetAddress = getProperty("target.address", "obsidian-mc.ru");
 		String targetPortString = getProperty("target.port",
 				Constants.MINECRAFT_DEFAULT_PORT_STRING);
 		String portString = getProperty("port", Constants.DEFAULT_PORT_STRING);
@@ -30,17 +30,27 @@ public class ConsoleApplication {
 		if (!periodString.equals(Constants.PERIOID_DEFAULT_VALUE)) {
 			server.setPeriodInMS(periodString);
 		}
+		
+		if(!Boolean.parseBoolean(System.getProperty("server", Boolean.TRUE.toString()))) server.setHosting(true);
+		
+		if (server.isHosting()) {
+			System.out.println("Starting TCPBuffer server...");
+			targetAddress = getProperty("target.address", "localhost"); // ACTUAL MINECRAFT SERVER ADDRESS
+			targetPortString = getProperty("target.port", Constants.MINECRAFT_DEFAULT_PORT_STRING);  // ACTUAL MINECRAFT SERVER PORT
+			portString = getProperty("port", Constants.DEFAULT_PORT_STRING); // LISTENING TO
+		} else {
+			System.out.println("Starting TCPBuffer client...");
+			targetAddress = getProperty("target.address", "obsidian-mc.ru"); // WHERE TO CONNECT
+			targetPortString = getProperty("target.port", Constants.DEFAULT_PORT_STRING);  // WHAT PORT TO CONNECT
+			portString = getProperty("port", Constants.MINECRAFT_DEFAULT_PORT_STRING); // PROXY PORT
+		}
+		
 		server.startServer(targetAddress, targetPortString, portString);
 	}
 
 	public static String getProperty(String property, String defaultValue) {
 		String value = System.getProperty(property);
-		if (value == null) {
-			System.out.printf(
-					"Property \"%s\" was not set: Using default \"%s\"%n",
-					property, defaultValue);
-			value = defaultValue;
-		}
+		if (value == null) value = defaultValue;
 		return value;
 	}
 }
