@@ -23,11 +23,15 @@ public class CommandExecutor {
 				return "Bans: "+assholes.toString();
 			} else {
 				ban(banned);
-				return "Banned that asshole, " + banned + ".";
+				return "Banned IP " + banned + ".";
 			}
+		} else if (command.startsWith("unban ")) {
+			String banned = command.substring(4);
+			unban(banned);
+			return "Unbanned IP " + banned + ".";
 		} else if (command.equalsIgnoreCase("reload")) {
 			loadConfig();
-			return "Banned list reloaded";
+			return "Banned IPs list reloaded";
 		} else {
 			return "WTF??";
 		}
@@ -35,6 +39,13 @@ public class CommandExecutor {
 
 	private static void ban(String banned) {
 		assholes.add(banned);
+		saveConfig();
+	}
+	
+	private static void unban(String banned) {
+		if (assholes.contains(banned)) {
+			assholes.remove(banned);
+		}
 		saveConfig();
 	}
 
@@ -45,6 +56,7 @@ public class CommandExecutor {
 	
 	public static void loadConfig() {
 		String[] bannedGuys = null;
+		assholes.clear();
 		try {
 			FileArrayProvider fap = new FileArrayProvider();
 	        bannedGuys = fap.readLines(dir+"/banned.txt");

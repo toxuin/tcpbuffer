@@ -38,6 +38,7 @@ public class TCPBuffer {
 			targetAddress = getProperty("target.address", "localhost"); // ACTUAL MINECRAFT SERVER ADDRESS
 			targetPortString = getProperty("target.port", Constants.MINECRAFT_DEFAULT_PORT_STRING);  // ACTUAL MINECRAFT SERVER PORT
 			portString = getProperty("port", Constants.DEFAULT_PORT_STRING); // LISTENING TO
+			CommandExecutor.loadConfig();
 		} else {
 			System.out.println("Starting TCPBuffer client...");
 			targetAddress = getProperty("target.address", "obsidian-mc.ru"); // WHERE TO CONNECT
