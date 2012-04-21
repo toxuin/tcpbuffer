@@ -71,6 +71,12 @@ final class ConnectionAcceptingThread extends Thread {
 			throws IOException {
 		final String s0Name = s0.getInetAddress().getHostAddress();
 		final String s1Name = s1.getInetAddress().getHostAddress();
+		
+		if (CommandExecutor.isBanned(s0Name)) {  // CHECKING FOR BANNED USERS
+			eventListener.handleEvent(String.format("Banned IP detected: %s, not connectiong him.", s0Name));
+			return;
+		}
+		
 		eventListener.handleEvent(String.format(
 				"Forwarding data between %s and %s", s0Name, s1Name));
 		ConnectionEndListener connectionEndListener = new ConnectionEndListener(

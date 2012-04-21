@@ -15,14 +15,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
 	private boolean hosting;
 	private final List<HostingListener> hostingListener = new ArrayList<HostingListener>();
-	private final List<EventListener> eventListener = new ArrayList<EventListener>();
+	private final static List<EventListener> eventListener = new ArrayList<EventListener>();
 	private final List<ServerStateListener> serverStateListener = new ArrayList<ServerStateListener>();
-	private ServerSocket serverSocket;
+	private static ServerSocket serverSocket;
 	private final AtomicInteger periodInMS = new AtomicInteger(50);
 
 	public boolean isHosting() {
@@ -37,7 +38,7 @@ public class Server {
 		eventListener.add(listener);
 	}
 
-	private synchronized void fireEvent(String event) {
+	private synchronized static void fireEvent(String event) {
 		for (EventListener listener : eventListener) {
 			listener.handleEvent(event);
 		}
@@ -65,7 +66,7 @@ public class Server {
 		}
 		fireEvent(String.format("Started: Listening at port %d.", port));
 		fireServerStarted();
-
+		
 		Thread thread;
 		thread = new ConnectionAcceptingThread(targetPort, targetAddress,
 				serverSocket, periodInMS, new ServerStateListener() {
@@ -87,6 +88,15 @@ public class Server {
 					}
 				});
 		thread.start();
+		
+	    if (isHosting()) {	
+	    	Scanner scan = new Scanner(System.in);
+		    String in = scan.nextLine();
+		    while(true){
+		    	System.out.println(CommandExecutor.exec(in));
+		        in = scan.nextLine();
+		    }
+	    }
 	}
 
 	public synchronized void setHosting(boolean hosting) {
@@ -121,7 +131,7 @@ public class Server {
 		this.serverStateListener.add(listener);
 	}
 
-	public synchronized void stop() {
+	public synchronized static void stop() {
 		if (serverSocket != null) {
 			try {
 				serverSocket.close();

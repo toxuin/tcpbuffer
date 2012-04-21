@@ -11,7 +11,7 @@
  */
 package de.fkoeberle.tcpbuffer;
 
-public class ConsoleApplication {
+public class TCPBuffer {
 	public static void main(String[] args) {
 		String targetAddress = getProperty("target.address", "obsidian-mc.ru");
 		String targetPortString = getProperty("target.port",
